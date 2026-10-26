@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Logo from './Logo';
 
 // Nav items shared by the desktop inline nav and the mobile menu
-const links = ['Work', 'Studio', 'Approach', 'Services', 'Contact'];
+const links = ['Work', 'Services', 'Contact'];
 
 export default function Navbar() {
   // Whether the mobile menu is open (desktop nav doesn't use this)
