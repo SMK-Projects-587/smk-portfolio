@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Logo from './Logo';
+import Logo from './ui/Logo';
 
 // Nav items shared by the desktop inline nav and the mobile menu
 const links = ['Work', 'Services', 'Contact'];
