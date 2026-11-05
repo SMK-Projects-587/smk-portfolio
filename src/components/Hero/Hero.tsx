@@ -1,41 +1,60 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import OrbitIllustration, { OrbitShadow } from './ui/OrbitIllustration';
+import { pillars } from '@/constants/pillars';
+import OrbitIllustration, {
+  OrbitShadow,
+} from '@/components/ui/OrbitIllustration';
 
 // Degrees of rotation per pixel scrolled (down = clockwise, up = counter-clockwise)
 const DEG_PER_PX = 0.15;
 // How quickly the drawn angle catches up to the target each frame (0–1)
 const EASE = 0.12;
 
-const tags = ['IDEAS', 'DESIGN', 'DEVELOP', 'GROW'];
-
-export default function Hero() {
+export function Hero() {
   const illustrationRef = useRef<HTMLDivElement>(null);
+  const cueDotRef = useRef<HTMLSpanElement>(null);
 
-  // Rotate the illustration with scroll, eased so it glides instead of jumping
+  // Rotate the illustration with scroll, eased so it glides instead of jumping,
+  // and slide the scroll cue's circle down its line in step
   useEffect(() => {
+    const el = illustrationRef.current;
+    const box = el?.parentElement; // the static (unrotated) illustration box
+    const dot = cueDotRef.current;
+    if (!el || !box || !dot) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    let lastY = window.scrollY;
-    let target = 0; // angle we want to reach, driven by scroll
-    let current = 0; // angle currently drawn, eased toward target
+    // The angle follows the scroll position itself, so the top of the page
+    // always shows the default pose (even after a reload mid-page). It stops
+    // changing once the illustration has scrolled out of view, so long jumps
+    // (nav links, back to top) don't spin it round several times.
+    let maxAngle = 1; // angle at the point the illustration leaves the view
+    const angleForScroll = () => {
+      const outOfView = box.getBoundingClientRect().bottom + window.scrollY;
+      maxAngle = outOfView * DEG_PER_PX;
+      return Math.min(window.scrollY, outOfView) * DEG_PER_PX;
+    };
+
+    let target = angleForScroll(); // angle we want to reach, driven by scroll
+    let current = target; // angle currently drawn, eased toward target
     let frame = 0;
+    const draw = () => {
+      el.style.transform = `rotate(${current}deg)`;
+      // Circle travels from the top of the line (0) to the bottom (1)
+      dot.style.top = `calc(${current / maxAngle} * (100% - 0.5rem))`;
+    };
+    draw();
 
     // Animate only while there is distance left to cover, then go idle
     const tick = () => {
       current += (target - current) * EASE;
       if (Math.abs(target - current) < 0.01) current = target;
-      if (illustrationRef.current) {
-        illustrationRef.current.style.transform = `rotate(${current}deg)`;
-      }
+      draw();
       frame = current === target ? 0 : requestAnimationFrame(tick);
     };
 
     const onScroll = () => {
-      const y = window.scrollY;
-      target += (y - lastY) * DEG_PER_PX;
-      lastY = y;
+      target = angleForScroll();
       if (!frame) frame = requestAnimationFrame(tick);
     };
 
@@ -87,8 +106,8 @@ export default function Hero() {
         {/* Desktop only: tags and scroll cue stay still, in the drawing's empty corners */}
         <div className="text-ink/70 absolute top-0 right-0 hidden text-[0.6875rem] leading-[1.9] tracking-[0.28em] md:block">
           <ul>
-            {tags.map((tag) => (
-              <li key={tag}>{tag}</li>
+            {pillars.map((pillar) => (
+              <li key={pillar}>{pillar}</li>
             ))}
           </ul>
           <div className="bg-ink/25 mt-3 h-px w-full" />
@@ -98,9 +117,13 @@ export default function Hero() {
           className="text-ink/70 absolute right-0 bottom-0 hidden flex-col items-center gap-2 text-[0.6875rem] tracking-[0.28em] md:flex"
         >
           SCROLL
-          <span className="flex flex-col items-center">
-            <span className="bg-ink/50 h-14 w-px" />
-            <span className="border-ink/60 size-2 rounded-full border" />
+          {/* Line with a circle that slides down it as the page scrolls */}
+          <span className="relative h-16 w-2">
+            <span className="bg-ink/50 absolute inset-y-1 left-1/2 w-px -translate-x-1/2" />
+            <span
+              ref={cueDotRef}
+              className="border-ink/60 bg-cream absolute top-0 left-0 size-2 rounded-full border"
+            />
           </span>
         </div>
       </div>

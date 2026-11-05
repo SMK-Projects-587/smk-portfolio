@@ -1,10 +1,10 @@
-// Stone sphere, smoked-glass sphere, chrome and marble balls on two chrome
-// orbit rings, drawn on a 580x580 canvas. Materials come from SVG gradients and
-// filters: the stone has lit micro-relief, hairline cracks and pores, and the
-// marble has two layers of veins.
+// Large marble sphere, smoked-glass sphere, chrome and marble balls on two
+// chrome orbit rings, drawn on a 580x580 canvas. Materials come from SVG
+// gradients and filters: both marbles have clouds and two layers of veins, and
+// the chrome pieces have banded studio reflections.
 
 // Sphere positions, shared by each sphere and its clip path
-const STONE = { cx: 285, cy: 305, r: 168 };
+const CORE = { cx: 285, cy: 305, r: 168 };
 const GLASS = { cx: 167, cy: 355, r: 104 };
 const CHROME = { cx: 450, cy: 182, r: 31 };
 const MARBLE = { cx: 390, cy: 507, r: 45 };
@@ -32,17 +32,24 @@ function Ring({
 }) {
   return (
     <g transform={ring.transform} fill="none" clipPath={`url(#o-${half})`}>
+      {/* polished tube: darker edges, banded reflections, a bright specular line */}
       <ellipse
         rx={ring.rx}
         ry={ring.ry}
-        stroke="url(#o-ring-body)"
+        stroke="url(#o-ring-edge)"
         strokeWidth="4.4"
       />
       <ellipse
         rx={ring.rx}
         ry={ring.ry}
+        stroke="url(#o-ring-body)"
+        strokeWidth="3.4"
+      />
+      <ellipse
+        rx={ring.rx}
+        ry={ring.ry}
         stroke="url(#o-ring-shine)"
-        strokeWidth="1.3"
+        strokeWidth="1"
       />
     </g>
   );
@@ -90,11 +97,11 @@ export default function OrbitIllustration({
       viewBox="0 0 580 580"
       className={className}
       role="img"
-      aria-label="Stone, glass, chrome and marble spheres on orbit rings"
+      aria-label="Marble, glass and chrome spheres on orbit rings"
     >
       <defs>
-        {/* Stone (plaster) */}
-        <radialGradient id="o-stone" cx="68%" cy="22%" r="96%">
+        {/* Large marble sphere: warm cream body */}
+        <radialGradient id="o-core" cx="68%" cy="22%" r="96%">
           <stop offset="0" stopColor="#FDFAF5" />
           <stop offset="0.32" stopColor="#F2E8DC" />
           <stop offset="0.6" stopColor="#DCCBBA" />
@@ -102,93 +109,110 @@ export default function OrbitIllustration({
           <stop offset="1" stopColor="#9E8A77" />
         </radialGradient>
         {/* bounce light from the floor on the lower edge */}
-        <radialGradient id="o-stone-bounce" cx="55%" cy="105%" r="55%">
+        <radialGradient id="o-core-bounce" cx="55%" cy="105%" r="55%">
           <stop offset="0" stopColor="#F3E9DC" stopOpacity="0.55" />
           <stop offset="1" stopColor="#F3E9DC" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id="o-stone-core" cx="22%" cy="82%" r="75%">
+        <radialGradient id="o-core-shadow" cx="22%" cy="82%" r="75%">
           <stop offset="0" stopColor="#5A4636" stopOpacity="0.38" />
           <stop offset="0.55" stopColor="#5A4636" stopOpacity="0.12" />
           <stop offset="1" stopColor="#5A4636" stopOpacity="0" />
         </radialGradient>
+        {/* Marble pattern for the large sphere (veins only, drawn over the
+            gradient): soft clouds, flowing main veins and fine secondary ones.
+            The main veins start as these unevenly spaced lines. */}
+        <linearGradient
+          id="o-core-veins"
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="0.5"
+          spreadMethod="repeat"
+        >
+          <stop offset="0.07" stopColor="#7D6B5B" stopOpacity="0" />
+          <stop offset="0.085" stopColor="#7D6B5B" stopOpacity="0.75" />
+          <stop offset="0.095" stopColor="#7D6B5B" stopOpacity="0" />
+          <stop offset="0.3" stopColor="#8C7B6B" stopOpacity="0" />
+          <stop offset="0.306" stopColor="#8C7B6B" stopOpacity="0.45" />
+          <stop offset="0.312" stopColor="#8C7B6B" stopOpacity="0" />
+          <stop offset="0.36" stopColor="#7D6B5B" stopOpacity="0" />
+          <stop offset="0.372" stopColor="#7D6B5B" stopOpacity="0.6" />
+          <stop offset="0.38" stopColor="#7D6B5B" stopOpacity="0" />
+          <stop offset="0.7" stopColor="#8C7B6B" stopOpacity="0" />
+          <stop offset="0.71" stopColor="#8C7B6B" stopOpacity="0.35" />
+          <stop offset="0.717" stopColor="#8C7B6B" stopOpacity="0" />
+        </linearGradient>
         <filter
-          id="o-stone-surface"
+          id="o-core-marble"
           x="0"
           y="0"
           width="100%"
           height="100%"
           colorInterpolationFilters="sRGB"
         >
-          {/* micro relief lit from the upper right */}
           <feTurbulence
             type="fractalNoise"
-            baseFrequency="0.045"
-            numOctaves="4"
-            seed="3"
-            result="relief"
+            baseFrequency="0.011"
+            numOctaves="3"
+            seed="8"
+            result="cloud"
           />
-          <feDiffuseLighting
-            in="relief"
-            surfaceScale="2.2"
-            diffuseConstant="1"
-            lightingColor="#ffffff"
-            result="lit"
-          >
-            <feDistantLight azimuth="300" elevation="58" />
-          </feDiffuseLighting>
-          {/* hairline cracks: creases of a turbulence field */}
+          <feColorMatrix
+            in="cloud"
+            type="matrix"
+            values="0 0 0 0 0.66  0 0 0 0 0.6  0 0 0 0 0.54  0.6 0 0 0 -0.28"
+            result="clouds"
+          />
+          {/* main veins: the straight vein lines painted on the square,
+              warped by noise so they flow like real marble */}
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.005"
+            numOctaves="2"
+            seed="17"
+            result="warp"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="warp"
+            scale="130"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="v1"
+          />
+          {/* crisp vein plus the soft halo real veins have around them */}
+          <feGaussianBlur in="v1" stdDeviation="2.5" result="halo" />
+          <feComponentTransfer in="halo" result="haloSoft">
+            <feFuncA type="linear" slope="0.5" />
+          </feComponentTransfer>
+          <feGaussianBlur in="v1" stdDeviation="0.4" result="v1b" />
           <feTurbulence
             type="turbulence"
-            baseFrequency="0.05"
-            numOctaves="2"
-            seed="21"
-            result="t"
+            baseFrequency="0.022 0.012"
+            numOctaves="4"
+            seed="29"
+            result="t2"
           />
           <feColorMatrix
-            in="t"
+            in="t2"
             type="matrix"
             values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"
-            result="ta"
+            result="a2"
           />
-          <feComponentTransfer in="ta" result="crackMask">
+          <feComponentTransfer in="a2" result="m2">
             <feFuncA
               type="table"
-              tableValues="0.75 0.12 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+              tableValues="0.55 0.08 0 0 0 0 0 0 0 0 0 0 0 0"
             />
           </feComponentTransfer>
-          <feFlood floodColor="#A79686" />
-          <feComposite in2="crackMask" operator="in" result="cracks" />
-          {/* fine pores */}
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.85"
-            numOctaves="1"
-            seed="5"
-            result="p"
-          />
-          <feColorMatrix
-            in="p"
-            type="matrix"
-            values="0 0 0 0 0.5  0 0 0 0 0.44  0 0 0 0 0.38  -1.1 0 0 0 0.55"
-            result="pores"
-          />
-          <feMerge result="detail">
-            <feMergeNode in="cracks" />
-            <feMergeNode in="pores" />
+          <feFlood floodColor="#A69686" />
+          <feComposite in2="m2" operator="in" result="v2" />
+          <feMerge>
+            <feMergeNode in="clouds" />
+            <feMergeNode in="haloSoft" />
+            <feMergeNode in="v2" />
+            <feMergeNode in="v1b" />
           </feMerge>
-          <feComponentTransfer in="lit" result="litOnly">
-            <feFuncR type="linear" slope="0.5" intercept="0.56" />
-            <feFuncG type="linear" slope="0.5" intercept="0.56" />
-            <feFuncB type="linear" slope="0.5" intercept="0.56" />
-          </feComponentTransfer>
-          <feBlend
-            in="SourceGraphic"
-            in2="litOnly"
-            mode="multiply"
-            result="shaded"
-          />
-          <feComposite in="detail" in2="shaded" operator="over" result="all" />
-          <feComposite in="all" in2="SourceAlpha" operator="in" />
         </filter>
 
         {/* Smoked glass */}
@@ -213,14 +237,17 @@ export default function OrbitIllustration({
           <stop offset="1" stopColor="#ffffff" stopOpacity="0.35" />
         </linearGradient>
 
-        {/* Chrome ball */}
-        <linearGradient id="o-chrome" x1="0" y1="0" x2="0.25" y2="1">
-          <stop offset="0" stopColor="#F7F5F1" />
-          <stop offset="0.3" stopColor="#A9A39B" />
-          <stop offset="0.47" stopColor="#4A443D" />
-          <stop offset="0.53" stopColor="#211E1A" />
-          <stop offset="0.75" stopColor="#5E564C" />
-          <stop offset="1" stopColor="#D6CBBC" />
+        {/* Chrome ball: bright sky, a sharp dark horizon, warm ground below */}
+        <linearGradient id="o-chrome" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0" stopColor="#FFFFFF" />
+          <stop offset="0.22" stopColor="#DAD6D0" />
+          <stop offset="0.4" stopColor="#8C867E" />
+          <stop offset="0.47" stopColor="#36312C" />
+          <stop offset="0.5" stopColor="#0E0C0A" />
+          <stop offset="0.57" stopColor="#2C2722" />
+          <stop offset="0.74" stopColor="#6E6558" />
+          <stop offset="0.9" stopColor="#C8BDAD" />
+          <stop offset="1" stopColor="#F2EADE" />
         </linearGradient>
         <radialGradient id="o-edge-dark" cx="45%" cy="40%" r="60%">
           <stop offset="0.6" stopColor="#000" stopOpacity="0" />
@@ -286,17 +313,30 @@ export default function OrbitIllustration({
         </filter>
 
         {/* Chrome ring tube */}
+        <linearGradient id="o-ring-edge" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#8E867B" />
+          <stop offset="0.5" stopColor="#6A635B" />
+          <stop offset="1" stopColor="#8A8278" />
+        </linearGradient>
+        {/* sharp light/dark bands, like a studio reflected in polished metal */}
         <linearGradient id="o-ring-body" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#BDB6AC" />
-          <stop offset="0.3" stopColor="#857C71" />
-          <stop offset="0.55" stopColor="#C9C2B7" />
-          <stop offset="0.8" stopColor="#7B7268" />
-          <stop offset="1" stopColor="#B5ADA2" />
+          <stop offset="0" stopColor="#F4F1EC" />
+          <stop offset="0.12" stopColor="#A39C92" />
+          <stop offset="0.2" stopColor="#5A544D" />
+          <stop offset="0.3" stopColor="#D9D4CC" />
+          <stop offset="0.42" stopColor="#FFFFFF" />
+          <stop offset="0.52" stopColor="#968F85" />
+          <stop offset="0.62" stopColor="#4E4943" />
+          <stop offset="0.72" stopColor="#C4BDB3" />
+          <stop offset="0.86" stopColor="#F7F4EF" />
+          <stop offset="1" stopColor="#8A8379" />
         </linearGradient>
         <linearGradient id="o-ring-shine" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.95" />
-          <stop offset="0.35" stopColor="#FFFFFF" stopOpacity="0.35" />
-          <stop offset="0.6" stopColor="#FFFFFF" stopOpacity="0.9" />
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity="1" />
+          <stop offset="0.25" stopColor="#FFFFFF" stopOpacity="0.3" />
+          <stop offset="0.45" stopColor="#FFFFFF" stopOpacity="1" />
+          <stop offset="0.65" stopColor="#FFFFFF" stopOpacity="0.25" />
+          <stop offset="0.85" stopColor="#FFFFFF" stopOpacity="0.95" />
           <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.4" />
         </linearGradient>
 
@@ -310,8 +350,8 @@ export default function OrbitIllustration({
           <feGaussianBlur stdDeviation="0.8" />
         </filter>
 
-        <clipPath id="o-clip-stone">
-          <circle {...STONE} />
+        <clipPath id="o-clip-core">
+          <circle {...CORE} />
         </clipPath>
         <clipPath id="o-clip-glass">
           <circle {...GLASS} />
@@ -334,11 +374,21 @@ export default function OrbitIllustration({
       <Ring ring={RING_WIDE} half="back" />
       <Ring ring={RING_TALL} half="back" />
 
-      {/* Stone */}
-      <circle {...STONE} fill="url(#o-stone)" filter="url(#o-stone-surface)" />
-      <g clipPath="url(#o-clip-stone)">
-        <circle {...STONE} fill="url(#o-stone-core)" />
-        <circle {...STONE} fill="url(#o-stone-bounce)" />
+      {/* Large marble sphere */}
+      <circle {...CORE} fill="url(#o-core)" />
+      <g clipPath="url(#o-clip-core)">
+        {/* pattern square covers the sphere; rotated so the veins run diagonally */}
+        <rect
+          x="25"
+          y="45"
+          width="520"
+          height="520"
+          transform="rotate(-32 285 305)"
+          fill="url(#o-core-veins)"
+          filter="url(#o-core-marble)"
+        />
+        <circle {...CORE} fill="url(#o-core-shadow)" />
+        <circle {...CORE} fill="url(#o-core-bounce)" />
         <path
           d="M150 400 C185 455 240 478 300 473"
           stroke="#F6EEE3"
@@ -367,9 +417,20 @@ export default function OrbitIllustration({
           opacity="0.35"
           filter="url(#o-blur-lg)"
         />
+        {/* tighter gloss on top, for a polished finish */}
+        <ellipse
+          cx="352"
+          cy="205"
+          rx="28"
+          ry="15"
+          transform="rotate(-32 352 205)"
+          fill="#FFFFFF"
+          opacity="0.55"
+          filter="url(#o-blur-md)"
+        />
       </g>
 
-      {/* tall ring: front half passes over the stone, behind the glass */}
+      {/* tall ring: front half passes over the large sphere, behind the glass */}
       <Ring ring={RING_TALL} half="front" />
 
       {/* Chrome ball */}
@@ -386,6 +447,15 @@ export default function OrbitIllustration({
           opacity="0.95"
           filter="url(#o-blur-sm)"
         />
+        {/* crisp hotspot inside the soft highlight */}
+        <ellipse
+          cx="436"
+          cy="165"
+          rx="4"
+          ry="2.4"
+          transform="rotate(-25 436 165)"
+          fill="#fff"
+        />
         <ellipse
           cx="462"
           cy="200"
@@ -396,6 +466,16 @@ export default function OrbitIllustration({
           opacity="0.5"
           filter="url(#o-blur-sm)"
         />
+        {/* bright rim where the ball reflects the lit floor */}
+        <path
+          d="M424.6 196 A29 29 0 0 0 475.4 196"
+          stroke="#FFF6EA"
+          strokeOpacity="0.8"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          fill="none"
+          filter="url(#o-blur-sm)"
+        />
       </g>
 
       {/* Smoked glass */}
@@ -403,7 +483,7 @@ export default function OrbitIllustration({
       <g clipPath="url(#o-clip-glass)">
         {/* light transmitted through the glass gathers at the bottom */}
         <circle {...GLASS} fill="url(#o-glass-caustic)" />
-        {/* warm reflection of the stone sphere on the right */}
+        {/* warm reflection of the large sphere on the right */}
         <ellipse
           cx="252"
           cy="335"

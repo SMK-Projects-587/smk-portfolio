@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Logo from './ui/Logo';
+import Logo from '@/components/ui/Logo';
 
 // Nav items shared by the desktop inline nav and the mobile menu
 const links = ['Work', 'Services', 'Contact'];
 
-export default function Navbar() {
+export function Navbar() {
   // Whether the mobile menu is open (desktop nav doesn't use this)
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
