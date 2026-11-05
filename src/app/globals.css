@@ -6,10 +6,19 @@ html {
 
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-caveat), cursive;
   --color-cream: #f8f5ec;
   --color-ink: #0d0d0d;
   --color-olive: #6b7a40;
   --text-hero: clamp(2.5rem, 4vw + 1.5rem, 4.5rem);
+  --text-2xs: 0.5rem;
+}
+
+/* Slim, ink-tinted scrollbar for small scrolling menus */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-ink) 25%, transparent)
+    transparent;
 }
 
 body {
