@@ -1,4 +1,4 @@
-// What SMK offers. Listed in the footer and offered in the contact form.
+// What SMK offers. Listed in the footer.
 export const services = [
   'Web Design',
   'Web Development',

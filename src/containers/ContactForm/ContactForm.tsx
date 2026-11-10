@@ -1,24 +1,13 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Select } from '@/components/Select';
-import { services } from '@/constants/services';
-
-const budgets = [
-  'Under ₹25,000',
-  '₹25,000 – ₹50,000',
-  '₹50,000 – ₹1,00,000',
-  'Above ₹1,00,000',
-];
+import { CountryCodeSelect } from '@/components/CountryCodeSelect';
 
 const MESSAGE_LIMIT = 500;
 
 // Shared look for the single-line fields
 const fieldClass =
   'border-ink/15 focus:border-ink placeholder:text-ink/50 h-12 w-full rounded-lg border bg-transparent px-4 text-sm transition-colors outline-none';
-
-// Dropdowns go full width on phones, where half a row is too narrow for the labels
-const selectLayout = 'col-span-2 sm:col-span-1';
 
 export function ContactForm() {
   const [messageLength, setMessageLength] = useState(0);
@@ -46,20 +35,25 @@ export function ContactForm() {
         className={fieldClass}
       />
 
-      <Select
-        name="type"
-        placeholder="Type of project"
-        options={services}
-        required
-        className={selectLayout}
-      />
-      <Select
-        name="budget"
-        placeholder="Budget range (INR)"
-        options={budgets}
-        required
-        className={selectLayout}
-      />
+      {/* One wide row: compact country code picker, then the number */}
+      <div className="border-ink/15 focus-within:border-ink col-span-2 flex h-12 items-stretch rounded-lg border transition-colors">
+        <CountryCodeSelect
+          name="countryCode"
+          className="border-ink/15 shrink-0 border-r"
+        />
+        <input
+          type="tel"
+          name="phone"
+          inputMode="tel"
+          aria-label="Mobile number"
+          placeholder="Mobile number *"
+          autoComplete="tel-national"
+          pattern="[0-9\s-]{6,15}"
+          title="Digits only, 6 to 15 characters"
+          required
+          className="placeholder:text-ink/50 min-w-0 flex-1 bg-transparent px-4 text-sm outline-none"
+        />
+      </div>
 
       <div className="border-ink/15 focus-within:border-ink col-span-2 rounded-lg border px-4 pt-3 pb-2 transition-colors">
         <label htmlFor="message" className="text-ink/70 block text-sm">

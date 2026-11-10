@@ -1,8 +1,8 @@
 const stats = [
   {
-    value: '01+',
-    title: 'Projects Delivered',
-    description: 'Real client projects',
+    value: '1',
+    title: 'Project Delivered',
+    description: 'A real client project, live and in use',
   },
   {
     value: '100+',
@@ -12,7 +12,7 @@ const stats = [
   {
     value: '5+',
     title: 'Years of Experience',
-    description: 'Combined experience in web development',
+    description: 'Software experience at a company',
   },
   {
     value: '100%',
