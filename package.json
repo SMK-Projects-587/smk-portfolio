@@ -22,7 +22,8 @@
   "dependencies": {
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-international-phone": "^4.8.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
@@ -31,7 +32,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "country-flag-icons": "^1.6.20",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "husky": "^9.1.7",
