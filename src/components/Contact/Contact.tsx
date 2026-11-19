@@ -34,7 +34,7 @@ export function Contact() {
                 <br />
                 Better
                 <br />
-                Businessss
+                Business
               </p>
               <svg
                 aria-hidden

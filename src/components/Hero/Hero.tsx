@@ -76,7 +76,7 @@ export function Hero() {
           INDEPENDENT DIGITAL STUDIO · INDIA
         </p>
 
-        <h1 className="md:text-hero mt-3 text-[min(11vw,3rem,6.3dvh)] leading-[0.92] font-bold tracking-[-0.035em] md:mt-6 md:leading-[0.98]">
+        <h1 className="md:text-hero mt-3 text-[min(11vw,3rem,6.3svh)] leading-[0.92] font-bold tracking-[-0.035em] md:mt-6 md:leading-[0.98]">
           Digital
           <br />
           experiences

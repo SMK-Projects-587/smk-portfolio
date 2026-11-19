@@ -1,15 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Select } from '@/components/Select';
-import { services } from '@/constants/services';
-
-const budgets = [
-  'Under ₹25,000',
-  '₹25,000 – ₹50,000',
-  '₹50,000 – ₹1,00,000',
-  'Above ₹1,00,000',
-];
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+import './ContactForm.css';
 
 const MESSAGE_LIMIT = 500;
 
@@ -17,11 +11,10 @@ const MESSAGE_LIMIT = 500;
 const fieldClass =
   'border-ink/15 focus:border-ink placeholder:text-ink/50 h-12 w-full rounded-lg border bg-transparent px-4 text-sm transition-colors outline-none';
 
-// Dropdowns go full width on phones, where half a row is too narrow for the labels
-const selectLayout = 'col-span-2 sm:col-span-1';
-
 export function ContactForm() {
   const [messageLength, setMessageLength] = useState(0);
+  // Full number in international (E.164) format, e.g. "+919876543210"
+  const [phone, setPhone] = useState('');
 
   // Static export has no server: hook a form service (e.g. Web3Forms) in here
   const onSubmit = (e: FormEvent<HTMLFormElement>) => e.preventDefault();
@@ -46,20 +39,33 @@ export function ContactForm() {
         className={fieldClass}
       />
 
-      <Select
-        name="type"
-        placeholder="Type of project"
-        options={services}
-        required
-        className={selectLayout}
-      />
-      <Select
-        name="budget"
-        placeholder="Budget range (INR)"
-        options={budgets}
-        required
-        className={selectLayout}
-      />
+      {/* One wide row: flag and country menu, dial code, then the number,
+          formatted as it is typed. The dial code sits outside the text box,
+          so "required" still catches an empty number. */}
+      <div className="contact-phone border-ink/15 focus-within:border-ink col-span-2 h-12 rounded-lg border transition-colors">
+        <PhoneInput
+          defaultCountry="in"
+          disableDialCodeAndPrefix
+          showDisabledDialCodeAndPrefix
+          onChange={(value, { inputValue }) =>
+            setPhone(inputValue ? value : '')
+          }
+          placeholder="Mobile number *"
+          required
+          className="h-full w-full"
+          inputProps={{
+            'aria-label': 'Mobile number',
+            autoComplete: 'tel-national',
+            pattern: '(\\D*\\d){6,}\\D*',
+            title: 'Enter at least 6 digits',
+          }}
+          countrySelectorStyleProps={{
+            dropdownStyleProps: { className: 'scrollbar-thin' },
+          }}
+        />
+        {/* Submits the number in international format, dial code included */}
+        <input type="hidden" name="phone" value={phone} />
+      </div>
 
       <div className="border-ink/15 focus-within:border-ink col-span-2 rounded-lg border px-4 pt-3 pb-2 transition-colors">
         <label htmlFor="message" className="text-ink/70 block text-sm">
