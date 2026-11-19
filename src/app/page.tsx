@@ -1,10 +1,22 @@
-import Navbar from '@/components/Navbar';
-import Logo from '@/components/Logo';
+import { Navbar } from '@/components/Navbar';
+import { Hero } from '@/components/Hero';
+import { Impact } from '@/components/Impact';
+import { Contact } from '@/components/Contact';
+import { Footer } from '@/components/Footer';
 
-export default function Home() {
+export default function Page() {
   return (
-    <main id="home">
-      <Navbar />
-    </main>
+    <>
+      <main className="mx-auto w-full max-w-6xl">
+        {/* Navbar + hero fill exactly the first screen on mobile */}
+        <div className="flex min-h-dvh flex-col md:min-h-0">
+          <Navbar />
+          <Hero />
+        </div>
+        <Impact />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }
