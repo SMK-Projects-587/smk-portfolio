@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { CountryCodeSelect } from '@/components/CountryCodeSelect';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+import './ContactForm.css';
 
 const MESSAGE_LIMIT = 500;
 
@@ -11,6 +13,8 @@ const fieldClass =
 
 export function ContactForm() {
   const [messageLength, setMessageLength] = useState(0);
+  // Full number in international (E.164) format, e.g. "+919876543210"
+  const [phone, setPhone] = useState('');
 
   // Static export has no server: hook a form service (e.g. Web3Forms) in here
   const onSubmit = (e: FormEvent<HTMLFormElement>) => e.preventDefault();
@@ -35,24 +39,32 @@ export function ContactForm() {
         className={fieldClass}
       />
 
-      {/* One wide row: compact country code picker, then the number */}
-      <div className="border-ink/15 focus-within:border-ink col-span-2 flex h-12 items-stretch rounded-lg border transition-colors">
-        <CountryCodeSelect
-          name="countryCode"
-          className="border-ink/15 shrink-0 border-r"
-        />
-        <input
-          type="tel"
-          name="phone"
-          inputMode="tel"
-          aria-label="Mobile number"
+      {/* One wide row: flag and country menu, dial code, then the number,
+          formatted as it is typed. The dial code sits outside the text box,
+          so "required" still catches an empty number. */}
+      <div className="contact-phone border-ink/15 focus-within:border-ink col-span-2 h-12 rounded-lg border transition-colors">
+        <PhoneInput
+          defaultCountry="in"
+          disableDialCodeAndPrefix
+          showDisabledDialCodeAndPrefix
+          onChange={(value, { inputValue }) =>
+            setPhone(inputValue ? value : '')
+          }
           placeholder="Mobile number *"
-          autoComplete="tel-national"
-          pattern="[0-9\s-]{6,15}"
-          title="Digits only, 6 to 15 characters"
           required
-          className="placeholder:text-ink/50 min-w-0 flex-1 bg-transparent px-4 text-sm outline-none"
+          className="h-full w-full"
+          inputProps={{
+            'aria-label': 'Mobile number',
+            autoComplete: 'tel-national',
+            pattern: '(\\D*\\d){6,}\\D*',
+            title: 'Enter at least 6 digits',
+          }}
+          countrySelectorStyleProps={{
+            dropdownStyleProps: { className: 'scrollbar-thin' },
+          }}
         />
+        {/* Submits the number in international format, dial code included */}
+        <input type="hidden" name="phone" value={phone} />
       </div>
 
       <div className="border-ink/15 focus-within:border-ink col-span-2 rounded-lg border px-4 pt-3 pb-2 transition-colors">

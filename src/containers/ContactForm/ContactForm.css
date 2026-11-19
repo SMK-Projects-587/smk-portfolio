@@ -1,0 +1,90 @@
+/* Site theme for react-international-phone, scoped to the contact form's
+   phone row (.contact-phone).
+
+   Plain CSS rather than a CSS Module: next.config.ts runs every *.css file
+   through Tailwind as global CSS, so Module features such as :global() are
+   not available. The library's own stylesheet is not in a CSS layer, so it
+   outranks Tailwind utilities: the look is set through its CSS variables,
+   plus a few rules below with enough selector weight to win. The wrapper div
+   in the form supplies the outer border and focus colour, so the inner parts
+   are borderless and transparent. */
+.contact-phone {
+  --react-international-phone-height: 100%;
+  --react-international-phone-border-radius: 0;
+  --react-international-phone-border-color: transparent;
+  --react-international-phone-background-color: transparent;
+  --react-international-phone-text-color: var(--color-ink);
+  --react-international-phone-font-size: 0.875rem;
+  --react-international-phone-flag-width: 1.25rem;
+  --react-international-phone-flag-height: 1.25rem;
+
+  --react-international-phone-country-selector-background-color-hover: transparent;
+  --react-international-phone-country-selector-arrow-color: color-mix(
+    in srgb,
+    var(--color-ink) 60%,
+    transparent
+  );
+
+  --react-international-phone-dropdown-top: calc(100% + 0.5rem);
+  --react-international-phone-dropdown-item-background-color: var(
+    --color-cream
+  );
+  --react-international-phone-dropdown-item-height: 2.25rem;
+  --react-international-phone-dropdown-item-font-size: 0.875rem;
+  --react-international-phone-dropdown-item-dial-code-color: color-mix(
+    in srgb,
+    var(--color-ink) 60%,
+    transparent
+  );
+  --react-international-phone-selected-dropdown-item-background-color: color-mix(
+    in srgb,
+    var(--color-ink) 5%,
+    transparent
+  );
+  --react-international-phone-dropdown-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Flag and arrow, tucked against the left edge like the other fields */
+.contact-phone
+  .react-international-phone-input-container
+  .react-international-phone-country-selector-button {
+  padding: 0 0.125rem 0 0.75rem;
+}
+
+/* "+91" beside the flag, with the divider before the number */
+.contact-phone .react-international-phone-dial-code-preview {
+  padding: 0 0.75rem 0 0.25rem;
+  border-right-color: color-mix(in srgb, var(--color-ink) 15%, transparent);
+}
+
+.contact-phone
+  .react-international-phone-input-container
+  .react-international-phone-input {
+  min-width: 0;
+  flex: 1;
+  padding: 0 1rem;
+}
+
+.contact-phone .react-international-phone-input::placeholder {
+  color: color-mix(in srgb, var(--color-ink) 50%, transparent);
+}
+
+/* Menu: same card look as the site's other dropdowns */
+.contact-phone .react-international-phone-country-selector-dropdown {
+  z-index: 20;
+  width: 16rem;
+  max-height: 13rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.contact-phone .react-international-phone-country-selector-dropdown__list-item {
+  padding: 0 0.75rem;
+}
+
+.contact-phone
+  .react-international-phone-country-selector-dropdown__list-item-country-name {
+  flex: 1;
+}
